@@ -1,14 +1,10 @@
 const requestPromise = require('request-promise');
 const notifier = require('node-notifier');
 
-let date = '07-05-2021';
+let date = '07-05-2021'; // current date
 let timer = 15000;
-let beneficiariesId = [
-	'31385917350530', // tanya
-	'73837591305550' // joohi
-]
-let userAuthotisationToken = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxY2IzMThmNC1kNDY4LTQ0OWEtYTYyNS1jODg4NDZiZWI2YWIiLCJ1c2VyX2lkIjoiMWNiMzE4ZjQtZDQ2OC00NDlhLWE2MjUtYzg4ODQ2YmViNmFiIiwidXNlcl90eXBlIjoiQkVORUZJQ0lBUlkiLCJtb2JpbGVfbnVtYmVyIjo5OTAwMzA1Mzk4LCJiZW5lZmljaWFyeV9yZWZlcmVuY2VfaWQiOjg2NDIzNDM0NDQ2NjkwLCJzZWNyZXRfa2V5IjoiYjVjYWIxNjctNzk3Ny00ZGYxLTgwMjctYTYzYWExNDRmMDRlIiwidWEiOiJNb3ppbGxhLzUuMCAoTWFjaW50b3NoOyBJbnRlbCBNYWMgT1MgWCAxMF8xNV83KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvOTAuMC40NDMwLjkzIFNhZmFyaS81MzcuMzYgRWRnLzkwLjAuODE4LjUxIiwiZGF0ZV9tb2RpZmllZCI6IjIwMjEtMDUtMDdUMTY6MDQ6NTMuNTQxWiIsImlhdCI6MTYyMDQwMzQ5MywiZXhwIjoxNjIwNDA0MzkzfQ.Ld1zPonLNfLXGNDnj0LVyS8VPA8tE_bbcC2d0imJMq4`;
-// let userAgent = `Mozilla/5.0`;
+let beneficiariesId = []; // beneficiaries_reference ids for whome you want to book the vaccine appointment
+let userAuthotisationToken = ``; // pass bearer token you ca get from the browser
 
 const scheduleVaccine = async (data) => {
 	let dataToSend = {
