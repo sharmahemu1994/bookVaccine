@@ -9,7 +9,7 @@ let beneficiariesId = [
 ]; // add beneficiaries id
 
 let userAuthotisationToken = ``;
- // add authentication bearer token can get
+// add authentication bearer token can get
 
 
 const scheduleVaccine = async (data) => {
@@ -40,15 +40,7 @@ const scheduleVaccine = async (data) => {
 		console.log('------scheduleVaccine------', err.message);
 		return false;
 	});
-}
-
-const dummyRequestData = {
-	"session_id": "b4e8e3aa-e398-4572-8385-09f7ede40c3c",
-	"center_id": 572920,
-	"slot": "05:26PM-05:56PM",
-	capacity: 2
 };
-
 
 let checkAppointment = async () => {
 	let availableCentres = [];
@@ -63,7 +55,7 @@ let checkAppointment = async () => {
 	}).then(result => {
 		for (const item of result.body.centers) {
 			for (const item2 of item.sessions) {
-				if (item2.min_age_limit === 18 && item2.available_capacity > 0) {
+				if (item2.min_age_limit === 18 && item2.available_capacity_dose1 > 0) {
 					availableCentres.push({
 						session_id: item2.session_id,
 						slot: item2.slots[item2.slots.length - 1],
