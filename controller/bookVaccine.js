@@ -112,7 +112,6 @@ async function check() {
 	}
 }
 
-check();
 module.exports = {
 	check
 }
