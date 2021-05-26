@@ -52,7 +52,7 @@ let checkAppointment = async () => {
 	}).then(result => {
 		for (const item of result.body.centers) {
 			for (const item2 of item.sessions) {
-				if (item2.min_age_limit === 18 && item2.available_capacity_dose1 > 0 && item2.vaccine == "COVAXIN") {
+				if (item2.min_age_limit === 18 && item2.available_capacity_dose1 > 0) {
 					availableCentres.push({
 						session_id: item2.session_id,
 						slot: item2.slots[item2.slots.length - 1],
