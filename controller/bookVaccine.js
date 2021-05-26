@@ -52,7 +52,11 @@ let checkAppointment = async () => {
 	}).then(result => {
 		for (const item of result.body.centers) {
 			for (const item2 of item.sessions) {
-				if (item2.min_age_limit === 18 && item2.available_capacity_dose1 > 0) {
+				let checkDose = 'available_capacity_dose2'
+				if (config.DOSE === 1) {
+					checkDose = 'available_capacity_dose1'
+				}
+				if (item2.min_age_limit === 18 && item2[checkDose] > 0) {
 					availableCentres.push({
 						session_id: item2.session_id,
 						slot: item2.slots[item2.slots.length - 1],
@@ -95,7 +99,7 @@ async function check() {
 				message: JSON.stringify(datatosend[0]),
 				sound: "SMS"
 			});
-			process.exit(1)
+			process.exit(1);
 		} else {
 			setTimeout(() => {
 				check();
@@ -108,7 +112,7 @@ async function check() {
 	}
 }
 
-
+check();
 module.exports = {
 	check
 }
