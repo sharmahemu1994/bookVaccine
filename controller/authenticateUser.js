@@ -34,6 +34,9 @@ const generateOtp = async (req, res) => {
 		uri: `https://cdn-api.co-vin.in/api/v2/auth/generateMobileOTP`,
 		json: true,
 		resolveWithFullResponse: true,
+		headers: {
+			"Origin": "https://selfregistration.cowin.gov.in"
+		},
 		body: {
 			mobile: config.MOBILE_NUMBER,
 			secret: config.API_SECRET,
@@ -48,11 +51,14 @@ const generateOtp = async (req, res) => {
 };
 
 const updateAuthToken = async (token, txnId) => {
-	console.log("Fetching Auth Token");
+	console.log("Fetching Auth Token", token, txnId);
 	return await requestPromise({
 		method: "POST",
 		uri: `https://cdn-api.co-vin.in/api/v2/auth/validateMobileOtp`,
 		json: true,
+		headers: {
+			"Origin": "https://selfregistration.cowin.gov.in"
+		},
 		resolveWithFullResponse: true,
 		body: {
 			otp: token,
