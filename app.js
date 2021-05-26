@@ -1,131 +1,41 @@
-const requestPromise = require('request-promise');
-const notifier = require('node-notifier');
+var createError = require('http-errors');
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
 
-// secret: 
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
 
-let date = '10-05-2021';
-let timer = 15000;
-let beneficiariesId = [
-]; // add beneficiaries id
+var app = express();
 
-let userAuthotisationToken = ``;
-// add authentication bearer token can get
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
 
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
-const scheduleVaccine = async (data) => {
-	const {capacity, ...data2} = data;
-	let dataToSend = {
-		"dose": 1,
-		"beneficiaries": capacity > 1 ? beneficiariesId : [beneficiariesId[1]],
-		"captcha": 'Vfqbv', // tWy2p, RGcxH, r6Pzx
-		// "session_id": "b4e8e3aa-e398-4572-8385-09f7ede40c3c",
-		// "center_id": 572920,
-		// "slot": "05:26PM-05:56PM"
-		...data2
-	};
-	console.log('----dataToSend---', dataToSend);
-	return  await requestPromise({
-		method: 'POST',
-		uri: `https://cdn-api.co-vin.in/api/v2/appointment/schedule`,
-		headers: {
-			'authorization': userAuthotisationToken
-		},
-		json: true,
-		resolveWithFullResponse: true,
-		body: dataToSend
-	}).then(result => {
-		console.log('---------', result.body)
-		return true
-	}).catch(err => {
-		console.log('------scheduleVaccine------', err.message);
-		return false;
-	});
-};
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
 
-let checkAppointment = async () => {
-	let availableCentres = [];
-	return await requestPromise({
-		method: 'GET',
-		uri: `https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict?district_id=294&date=${date}`,
-		headers: {
-			'authorization': userAuthotisationToken
-		},
-		json: true,
-		resolveWithFullResponse: true
-	}).then(result => {
-		for (const item of result.body.centers) {
-			for (const item2 of item.sessions) {
-				if (item2.min_age_limit === 18 && item2.available_capacity_dose1 > 0) {
-					availableCentres.push({
-						session_id: item2.session_id,
-						slot: item2.slots[item2.slots.length - 1],
-						center_id: item.center_id,
-						capacity: item2.available_capacity
-					});
-					console.log(item.name, item.pincode);
-				}
-			}
-		}
-		console.log('----availableCentres----', availableCentres);
-		return availableCentres;
-	}).catch(err => {
-		console.log(err.statusCode);
-		return availableCentres;
-	});
-}
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
+});
 
-(
-	async function check() {
-		// try {
-		// 	await scheduleVaccine(dummyRequestData);
-		// }catch(error){
-		// 	console.error("error scheduling dummy request", error);
-		// }
-		let appointsments = await checkAppointment();
-		if (appointsments.length > 0) {
-			let datatosend = [];
-			for (const iterator of appointsments) {
-				if (iterator.session_id && iterator.slot) {
-					datatosend.push(iterator);
-				}
-			}
-			let secheduleSuccessful = await scheduleVaccine(datatosend[0]);
-			console.log('----secheduleSuccessful---', secheduleSuccessful);
-			if (secheduleSuccessful) {
-				notifier.notify({
-					title: done,
-					message: JSON.stringify(datatosend[0]),
-					sound: "SMS"
-				});
-				process.exit(1)
-			} else {
-				process.exit(1)
-				check();
-			}
-		} else {
-			setTimeout(() => {
-				check();
-			}, timer);
-		}
-	}
-)();
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
 
-// api to get captcha
-const getCaptcha = async () =>{
-	let availableCentres = [];
-	return await requestPromise({
-		method: 'GET',
-		uri: `https://cdn-api.co-vin.in/api/v2/auth/getRecaptcha`,
-		headers: {
-			'authorization': userAuthotisationToken
-		},
-		json: true,
-		resolveWithFullResponse: true
-	}).then(result => {
-		console.log('----availableCentres----', result.body);
-	}).catch(err => {
-		console.log(err.statusCode);
-		return availableCentres;
-	});
-}
+module.exports = app;

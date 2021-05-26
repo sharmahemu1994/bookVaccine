@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+
+  form(action="/generate_otp" , method="POST")
+    p
+      input(type="submit", value="get OTP")
+
+  form(action="/authenticate_otp" , method="POST")
+    input(type="hidden", name="txnId", value=txnId)
+    p OTP
+      input(type="text", name="otp") 
+    p
+      input(type="submit", value="login")
